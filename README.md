@@ -1170,3 +1170,147 @@ Qué se observa:
 - Escribes cualquier otra cosa: imprime "Opción no válida." y muestra el menú otra vez.
 - En un submenú, 1 o 2: ordena la misma lista en el sentido elegido y vuelve a mostrar el submenú.
 - En un submenú, 3: regresa al menú principal.
+
+
+10. FUNCIONAMIENTO INTERNO Y RECORRIDO COMPLETO AL EJECUTAR
+-----------------------------------------------------------
+
+En esta sección se explica el recorrido que sigue el programa desde que se escribe el comando para ejecutarlo hasta que termina. También se describe cómo se conectan las funciones entre sí y qué sucede con los datos durante el proceso.
+
+10.1 ¿Qué sucede desde que se ejecuta el archivo?
+
+Por ejemplo, al escribir en la terminal:
+
+    python burbuja_ejercicio1.py
+
+ocurre lo siguiente:
+
+1. La terminal inicia Python y le indica qué archivo debe ejecutar.
+2. Python lee el archivo de arriba hacia abajo. Primero encuentra los import, que cargan las herramientas necesarias, como unicodedata y math.
+3. Después encuentra las funciones def. Python registra sus nombres y el código que contienen. Todavía no ordena datos ni muestra los menús, porque las instrucciones de cada función se ejecutan hasta que esa función es llamada.
+4. Al llegar a main(), comienza la ejecución principal. La función muestra el menú y espera que el usuario escriba una opción.
+5. La opción seleccionada determina qué función se ejecuta: usar los datos de ejemplo, capturar datos propios o terminar.
+6. Cuando ya existe una lista de datos válida, se llama a mostrar_resultados() o a la función equivalente del ejercicio. Esta función prepara la información, llama al algoritmo de ordenamiento y presenta los resultados.
+7. Cuando termina de mostrar los resultados, el control vuelve al ciclo del menú. El programa no se cierra después de ordenar; espera una nueva elección.
+8. Cuando el usuario selecciona Salir, break termina el ciclo del menú. La función main() finaliza y se muestra el mensaje final del archivo.
+
+10.2 Cómo se conectan las funciones durante una ejecución
+
+El recorrido general de los programas es el siguiente:
+
+    Inicio del archivo
+          |
+          v
+    Carga de módulos y definición de funciones
+          |
+          v
+    main(): muestra el menú
+          |
+          v
+    El usuario selecciona una opción
+          |
+          +-------------------------------+
+          |               |               |
+          v               v               v
+       Ejemplo       Datos propios       Salir
+          |               |               |
+          v               v               v
+    Función de       Función manual     Termina el
+    datos ejemplo    y validaciones     ciclo del menú
+          |               |
+          +-------+-------+
+                  |
+                  v
+          mostrar_resultados()
+                  |
+                  v
+          Algoritmo de ordenamiento
+                  |
+                  v
+          Resultados y estadísticas
+                  |
+                  v
+          Regresa al menú principal
+
+La función de captura no realiza el ordenamiento. Su responsabilidad es reunir los datos y comprobar que sean válidos. La función del algoritmo tampoco se encarga de mostrar todo el menú: recibe la lista, la ordena y, cuando corresponde, devuelve contadores o imprime los pasos. Finalmente, mostrar_resultados() organiza la salida que verá el usuario.
+
+10.3 Qué ocurre cuando el usuario captura sus propios datos
+
+Cuando se selecciona la opción para registrar información, el programa solicita los datos necesarios para el ejercicio. Dependiendo del archivo, puede pedir nombres, calificaciones, precios, existencias, tiempos, títulos, páginas, puntos, sueldos, antigüedad, ciudades o temperaturas.
+
+Cada dato se procesa antes de guardarse:
+
+- Los textos se reciben mediante leer(), que limpia espacios sobrantes y caracteres no imprimibles.
+- Los números pasan por pedir_entero() o pedir_decimal(), según corresponda.
+- Si el usuario escribe letras donde se espera un número, la conversión falla y el programa muestra un mensaje para volver a capturar ese mismo dato.
+- Si el número está fuera del rango permitido, también se rechaza y se vuelve a solicitar.
+- Cuando el dato cumple las condiciones, se incorpora a la lista que utilizará el programa.
+
+En los ejercicios que reciben números o nombres hasta presionar Enter con la entrada vacía, ese Enter indica que terminó la captura. Si no se reúnen al menos dos elementos, los ejercicios que lo requieren no intentan ordenar una lista insuficiente y regresan al menú.
+
+10.4 Qué hace internamente cada algoritmo durante el ordenamiento
+
+Burbuja:
+
+- Recibe la lista que debe ordenar y obtiene su cantidad de elementos con len().
+- El ciclo for externo controla las pasadas y el ciclo interno recorre los pares vecinos.
+- En cada comparación revisa si los dos elementos están en el orden solicitado.
+- Cuando están al revés, intercambia sus posiciones y registra el cambio si el ejercicio lleva contador.
+- En las versiones que utilizan hubo_cambio, si una pasada termina sin intercambios, el algoritmo sabe que la lista ya está ordenada y puede detenerse.
+- En los ejercicios que muestran el procedimiento, se imprime el estado de la lista después de cada pasada.
+
+Inserción:
+
+- Comienza desde el segundo elemento, porque una lista con un solo elemento ya está ordenada.
+- Guarda el elemento actual en una variable para no perderlo mientras mueve otros valores.
+- Compara ese elemento con los que están a su izquierda.
+- Mientras encuentra elementos que deben ir después, los desplaza una posición a la derecha.
+- Cuando encuentra el espacio correcto, coloca ahí el elemento guardado.
+- En los ejercicios que muestran pasos, imprime cómo quedó la lista después de insertar cada elemento.
+
+Selección:
+
+- Recorre la lista desde la primera posición hasta la penúltima.
+- En cada vuelta guarda en una variable la posición del mejor elemento encontrado hasta ese momento (por ejemplo, el menor o el mayor, según el ejercicio).
+- El ciclo interno revisa el resto de los elementos y actualiza esa posición cuando encuentra uno que debe ocupar el lugar actual.
+- Al terminar la búsqueda, intercambia el elemento elegido con el que estaba en la posición que se está ordenando, si es necesario.
+- En los ejercicios que muestran pasos, informa qué elemento seleccionó y cómo quedó la lista después del intercambio.
+
+10.5 Recorrido de ejecución de los nueve ejercicios
+
+Los nueve archivos comparten la idea de recibir datos, ordenarlos y presentar resultados, pero cada uno utiliza el método en una situación diferente.
+
+Burbuja:
+
+- burbuja_ejercicio1.py: al iniciar muestra el menú del ranking. Si se elige el ejemplo, carga los alumnos; si se registran alumnos propios, valida nombres y calificaciones. Después ordena por calificación de mayor a menor, muestra las posiciones, calcula el promedio y presenta la calificación más alta y la más baja. También informa las comparaciones y los intercambios realizados.
+- burbuja_ejercicio2.py: solicita o carga los productos del inventario. Después prepara copias de la lista para ordenarlas por precio ascendente, precio descendente y existencia ascendente. Muestra las tres tablas y señala los productos con menor existencia. La lista original se conserva para que cada ordenamiento comience con los mismos datos.
+- burbuja_ejercicio3.py: carga o captura los nombres y muestra el submenú de orden alfabético. Al elegir A-Z o Z-A, ordena una copia y muestra las pasadas del algoritmo. El submenú permanece disponible para probar el otro sentido con los mismos nombres. Al elegir volver, regresa al menú principal.
+
+Inserción:
+
+- insercion_ejercicio1.py: carga o captura corredores y sus tiempos. Ordena los tiempos de menor a mayor, porque un tiempo menor representa un mejor resultado. Después presenta la clasificación, asigna las medallas a los primeros lugares y calcula el promedio y la diferencia entre el primer y el último tiempo. También muestra comparaciones y desplazamientos.
+- insercion_ejercicio2.py: carga o captura libros. Utiliza la misma función de inserción con distintas claves para ordenar por año, por páginas y por título. Presenta cada tabla y determina cuál libro tiene menos páginas y cuál tiene más. Las copias permiten conservar el catálogo original.
+- insercion_ejercicio3.py: carga los números de ejemplo o permite escribir números hasta presionar Enter. Después muestra el submenú para elegir ascendente o descendente. Al ordenar, imprime cada paso de inserción y el resultado final. La lista original se mantiene para poder repetir el proceso en el otro sentido.
+
+Selección:
+
+- seleccion_ejercicio1.py: carga o captura jugadores y puntos. Busca el jugador con mayor puntuación para colocarlo en la siguiente posición. Al finalizar muestra la tabla, identifica al campeón y calcula los puntos totales y el promedio. También presenta las comparaciones y los intercambios.
+- seleccion_ejercicio2.py: carga o captura los empleados. La función de selección recibe una clave para saber si debe comparar sueldo, antigüedad o nombre. Por eso puede utilizarse el mismo algoritmo para generar tres ordenamientos diferentes. Al final muestra las tablas, suma la nómina y señala el sueldo más alto.
+- seleccion_ejercicio3.py: carga o captura ciudades y temperaturas. En cada vuelta busca la ciudad con la temperatura menor entre las que todavía faltan por ordenar. Muestra el elemento seleccionado y el estado de la lista. Finalmente presenta las ciudades de la más fría a la más cálida y calcula la diferencia de temperatura.
+
+10.6 Qué ve el usuario después de que termina el ordenamiento
+
+El resultado depende del ejercicio, pero normalmente se presenta en este orden:
+
+1. Una tabla o lista con los elementos ya ordenados.
+2. Información adicional del ejercicio, como promedio, total, podio, campeón, productos por reabastecer, libro más corto, libro más largo o diferencia de temperaturas.
+3. Los contadores del algoritmo, cuando el ejercicio los incluye: comparaciones, intercambios o desplazamientos.
+4. El menú principal otra vez, para que el usuario pueda ejecutar otra opción sin iniciar nuevamente el archivo.
+
+En los ejercicios que muestran el procedimiento, antes del resultado final también aparecen las pasadas o pasos intermedios. Esto permite observar cómo cambia la lista mientras trabaja el algoritmo, en lugar de ver únicamente la respuesta terminada.
+
+10.7 Cómo termina el programa
+
+El programa permanece activo mientras el ciclo del menú siga funcionando. Si se escribe una opción incorrecta, muestra "Opción no válida." y vuelve a solicitar una opción. Si se utiliza un submenú, la opción para volver termina únicamente ese submenú, no todo el archivo.
+
+Cuando se selecciona la opción Salir del menú principal, se ejecuta break. Esto rompe el ciclo while, permite que main() termine y el programa alcanza la instrucción final que muestra "Fin del programa.". En ese momento concluye la ejecución.
