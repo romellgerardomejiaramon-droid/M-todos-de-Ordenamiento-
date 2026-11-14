@@ -75,19 +75,19 @@ def mostrar(titulo, empleados):
     print(f"\n--- {titulo} ---")
     print(f"{'Empleado':<14}{'Sueldo':>12}{'Antigüedad':>13}")
     for e in empleados:
-        unidad = "año" if e["anios"] == 1 else "años"
-        antiguedad = f"{e['anios']} {unidad}"
+        unidad = "año" if e["años"] == 1 else "años"
+        antiguedad = f"{e['años']} {unidad}"
         print(f"{e['nombre']:<14}{e['sueldo']:>12,.2f}{antiguedad:>13}")
 
 
 def empleados_ejemplo():
     return [
-        {"nombre": "Roberto",  "sueldo": 18500.00, "anios": 6},
-        {"nombre": "Daniela",  "sueldo": 24000.00, "anios": 9},
-        {"nombre": "Javier",   "sueldo": 12800.00, "anios": 2},
-        {"nombre": "Patricia", "sueldo": 31500.00, "anios": 12},
-        {"nombre": "Miguel",   "sueldo": 15200.00, "anios": 4},
-        {"nombre": "Alejandra","sueldo": 21000.00, "anios": 7},
+        {"nombre": "Roberto",  "sueldo": 18500.00, "años": 6},
+        {"nombre": "Daniela",  "sueldo": 24000.00, "años": 9},
+        {"nombre": "Javier",   "sueldo": 12800.00, "años": 2},
+        {"nombre": "Patricia", "sueldo": 31500.00, "años": 12},
+        {"nombre": "Miguel",   "sueldo": 15200.00, "años": 4},
+        {"nombre": "Alejandra","sueldo": 21000.00, "años": 7},
     ]
 
 
@@ -98,15 +98,15 @@ def empleados_manual():
         print(f"\nEmpleado {i + 1}")
         nombre = leer("Nombre: ").strip()
         sueldo = pedir_decimal("Sueldo: ", 0.01)
-        anios = pedir_entero("Años de antigüedad: ", 0)
-        empleados.append({"nombre": nombre, "sueldo": sueldo, "anios": anios})
+        años = pedir_entero("Años de antigüedad: ", 0)
+        empleados.append({"nombre": nombre, "sueldo": sueldo, "años": años})
     return empleados
 
 
 def mostrar_resultados(empleados):
     mostrar("NÓMINA ORIGINAL", empleados)
     mostrar("SUELDO: de mayor a menor", seleccion(empleados.copy(), "sueldo", True))
-    mostrar("ANTIGÜEDAD: de mayor a menor", seleccion(empleados.copy(), "anios", True))
+    mostrar("ANTIGÜEDAD: de mayor a menor", seleccion(empleados.copy(), "años", True))
     mostrar("NOMBRE: de la A a la Z", seleccion(empleados.copy(), "nombre"))
 
     total = sum(e["sueldo"] for e in empleados)
